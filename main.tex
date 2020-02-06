@@ -1,0 +1,1087 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amsfonts, amsthm, amssymb}
+\usepackage{enumerate}
+\usepackage{mathtools}
+\usepackage[colorlinks]{hyperref}
+\usepackage{cleveref}
+\usepackage{tabu}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{mathrsfs}
+
+
+
+\usepackage[symbol]{footmisc}
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\renewcommand{\vec}[1]{\textup{\textbf{#1}}}
+\renewcommand{\o}{\text{\O}}
+\newcommand{\im}{\textup{Im\,}}
+\newcommand{\st}{\,:\,}
+\renewcommand{\mod}{\ \textup{mod}\,}
+\renewcommand{\le}{\textup{LE}}
+\newcommand{\lt}{\textup{LT}}
+\newcommand{\lm}{\textup{LM}}
+\newcommand{\supp}{\textup{Supp}}
+\newcommand{\val}{\textup{Val}}
+\newcommand{\col}{\textup{\texttt{Column}}}
+\newcommand{\legendre}{\mathscr{L}(\mathbf{s})}
+
+
+\DeclarePairedDelimiter\set{\{}{\}}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}
+\DeclarePairedDelimiter\inprod{\langle}{\rangle}
+
+\def\arraystretch{1.5}
+
+\makeatletter
+\let\oldset\set
+\def\set{\@ifstar{\oldset}{\oldset*}}
+
+\let\oldabs\abs
+\def\abs{\@ifstar{\oldabs}{\oldabs*}}
+
+\let\oldnorm\norm
+\def\norm{\@ifstar{\oldnorm}{\oldnorm*}}
+
+\let\oldinprod\inprod
+\def\inprod{\@ifstar{\oldinprod}{\oldinprod*}}
+\makeatother
+
+
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{definition}
+\newtheorem{notation}[theorem]{Notation}
+\theoremstyle{definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{cor}[theorem]{Corollary}
+\theoremstyle{plain}
+\newtheorem{prop}[theorem]{Proposition}
+\theoremstyle{plain}
+\newtheorem{result}{Result}
+
+\numberwithin{equation}{section}
+
+\newtheorem{innercustomthm}{Theorem}
+\newenvironment{customthm}[1]
+  {\renewcommand\theinnercustomthm{#1}\innercustomthm}
+  {\endinnercustomthm}
+\newtheorem{innercustomdef}{Definition}
+\newenvironment{customdef}[1]
+  {\renewcommand\theinnercustomdef{#1}\innercustomdef}
+  {\endinnercustomdef}
+\newtheorem{innercustomcor}{Corollary}
+\newenvironment{customcor}[1]
+  {\renewcommand\theinnercustomcor{#1}\innercustomcor}
+  {\endinnercustomcor}
+\newtheorem{innercustomprop}{Proposition}
+\newenvironment{customprop}[1]
+  {\renewcommand\theinnercustomprop{#1}\innercustomprop}
+  {\endinnercustomprop}
+\newtheorem{innercustomnot}{Notation}
+\newenvironment{customnot}[1]
+  {\renewcommand\theinnercustomnot{#1}\innercustomnot}
+  {\endinnercustomnot}
+
+
+\begin{document}
+
+% - - - - - - - - - - - - - - - - - - - - -
+%       TITLE PAGE
+% - - - - - - - - - - - - - - - - - - - - - 
+\begin{titlepage}
+	\centering
+% 	\hfill \\
+% 	\vspace{1.5cm}
+	{\scshape\Large Research Report \par}
+	{\scshape\large First Semester 2019-2020 \par}
+
+	\vspace{4cm}
+	{\scshape\huge On the Multidimensional Linear Complexity of Periodic Arrays\par}
+	\vspace{1.5cm}
+	{\large Jaziel Torres \& Luis Quiñones\par}
+	\vspace{.3 cm}
+	{\large Advisor: Ivelisse M. Rubio\par}
+	\vfill
+	{CCOM 3986\\
+	University of Puerto Rico, Rio Piedras\\
+	Department of Computer Sciences\par}
+	
+\end{titlepage}
+
+
+% - - - - - - - - - - - - - - - - - - - - -
+%       ABSTRACT
+% - - - - - - - - - - - - - - - - - - - - - 
+
+\begin{abstract}
+    Sequences and multidimensional periodic arrays with entries in finite fields have important applications in coding theory and cryptography. 
+    The correlations and the linear complexity of the sequences and multidimensional arrays are important parameters for many applications, especially those related to information security, and hardware implementation. 
+    The general goal of this research is to study different constructions of sequences and multidimensional periodic arrays and their correlation and complexity parameters.
+    We give a proof for the exact value of the complexity of an array constructed using the composition method that was previously conjectured.
+\end{abstract}
+
+
+
+% - - - - - - - - - - - - - - - - - - - - -
+%       INTRODUCTION
+% - - - - - - - - - - - - - - - - - - - - - 
+
+\section{Introduction}
+Multidimensional periodic arrays with entries in finite fields have important applications in coding theory and cryptography. 
+Sequences are one dimensional arrays and two important properties to measure how useful a sequence is for the applications are the correlation and the linear complexity. 
+The correlation measure has been extended to multidimensional arrays. 
+Complexity analysis of 2-dimensional arrays was done by ``unfolding” the array into a sequence using the Chinese Remainder Theorem (CRT) and then finding a minimal polynomial of the resulting sequence using the Berlekamp-Massey algorithm, or by considering the array as a multisequence and finding a joint minimal polynomial \cite{mullen2013handbook}. 
+However, the CRT method requires the dimensions of the array to be relatively prime and the multisequence approach does only weakly take into consideration possible relations among the sequences (columns) that constitute the array. 
+In addition, the generalization of these methods to multiple dimensions is not straightforward.
+
+In \cite{arce2019multidimensional} the authors applied the theory of Gr\"obner bases to extend the definition of linear complexity of sequences to a definition of linear complexity for multidimensional arrays; they also extended the algorithm presented in \cite{rubio2016finding} to compute the multidimensional linear complexity of periodic arrays. 
+The resulting algorithm relies only in linear algebra computations. An implementation programmed using C++ was done as part of this research, and can be found in \href{https://github.com/louieqp/RST}{https://github.com/louieqp/RST}.
+
+The present paper resumes the research work done during the first semester 2019-2020, mainly continuing the work in \cite{arce2019multidimensional}. The main result is the proof of the conjectures presented in the reffered paper. 
+
+
+
+
+% - - - - - - - - - - - - - - - - - - - - -
+%       PRELIMINARIES
+% - - - - - - - - - - - - - - - - - - - - - 
+
+\section{Preliminaries}
+\subsection{Gr\"obner Bases}
+Let $\mathbb{F}$ be any field, and denote $\mathbb{F}[x_1, ..., x_m]$ the polynomial ring in $m$ variables with coefficients in $\mathbb{F}$. 
+To ease notation, let $\Vec{x} = (x_1, ..., x_m)$ so that $\mathbb{F}[x_1, ..., x_m] = \mathbb{F}[\vec{x}]$. 
+Also, denote $\mathbb{N}_0 = \set{0,1,2,...}$.
+
+
+\begin{definition}
+    A \textbf{monomial ordering} on $\mathbb{F}[\Vec{x}]$ is any relation $<_T$ on $\mathbb{N}_0^m$, or equivalently, any relation on the set of monomials $\Vec{x}^\alpha, \alpha \in \mathbb{N}_0^m$, satisfying:
+    \begin{enumerate}[(i)]
+        \item $<_T$ is a total (or linear) ordering on $\mathbb{N}_0^m$.
+        \item If $\alpha <_T \beta$ and $\gamma \in \mathbb{N}_0^m$, then $\alpha + \gamma <_T \beta + \gamma$.
+        \item $<_T$ is a well-ordering on $\mathbb{N}_0^m$. 
+            This means that every nonempty subset of $\mathbb{N}_0^m$ has a smallest element under $<_T$.
+    \end{enumerate}
+\end{definition}
+
+
+\begin{lemma}\label{lemma_1}
+    Let $<_T$ be a monomial order and let $\alpha \in \mathbb{N}_0^m$.
+    Then
+    \begin{enumerate}[(i)]
+        \item $0 \leqslant_T \alpha$.
+        \item If $\vec{x}^\alpha \mid \vec{x}^\beta$, then $\alpha \leqslant_T \beta$.
+    \end{enumerate}
+\end{lemma}
+\begin{proof}
+    See appendix B.
+\end{proof}
+
+
+\begin{notation}
+    Let $P \in \mathbb{F}[\Vec{x}]$ be a nonzero polynomial and set a monomial order $<_T$.
+    Denote:
+    \begin{enumerate}
+        \item $\le(P)$ the leading exponent of $P$, i.e., the largest exponent of $P$ with respect to $<_T$.
+        \item $\lm(P)$ the leading monomial of $P$, i.e., $\lm(P) = \vec{x}^{\le(P)}$.
+    \end{enumerate}
+\end{notation}
+
+
+\begin{definition}\label{grobner_basis}
+    Fix a monomial order. 
+    A finite subset $G = \set{G_1, ..., G_s}$ of an ideal $I \subset \mathbb{F}[\vec{x}]$ is said to be a \textbf{Gr\"obner basis} of $I$ if and only if, for every $P \in I$, there exists $G_i$ such that $\lm(G_i) \mid \lm(P)$.
+    
+    If $G_i$ is monic for $i = 1,..., s$, and $\lm(G_i)$ does not divide any term of $G_j$ for $i \neq j$, then $G$ is a \textbf{reduced Gr\"obner basis} for $I$. 
+    For a given ideal and a specific monomial ordering, the reduced Gr\"obner basis is unique.
+\end{definition}
+
+
+\begin{notation}
+    Let $\alpha = (\alpha_1, ..., \alpha_m), \beta = (\beta_1, ..., \beta_m) \in \mathbb{N}_0^m$. 
+    We denote $\alpha \leqslant \beta$ if and only if $\alpha_i \leqslant \beta_i$ for $i = 1, ..., m$. 
+    This defines the partial order of divisibility where $\vec{x}^{\alpha} \mid \Vec{x}^\beta \iff \alpha \leqslant \beta$.
+\end{notation}
+
+
+\begin{remark}
+    To avoid confusion, $\leqslant_T$ will always refer to the monomial order, while $\leqslant$ will be use as the partial order of divisibility, in the case the comparison is between tuples, or the usual relation in the case of scalar (real) numbers. 
+    In the latter, we hope the distinction is clear when comparing tuples or scalars.
+\end{remark}
+
+
+\begin{lemma}\label{def_deltaSet}
+    Let $\Delta, \Gamma \in \mathbb{N}_0^m$ be set theoretic complements. 
+    The following conditions are equivalent:
+    \begin{enumerate}
+        \item For $\beta\in\Delta$ and $\alpha \in \mathbb{N}_0^m$, if $\alpha \leqslant    \beta$ then $\alpha \in \Delta$.
+        \item For $\alpha \in \Gamma$ and $\beta \in \mathbb{N}_0^m$, if $\alpha \leqslant \beta$ then $\beta \in \Gamma$.
+    \end{enumerate}
+\end{lemma}
+
+
+\begin{definition}
+    A set $\Delta \subset \mathbb{N}_0^m$ is called a \textbf{delta set} if it satisfies 1. in \cref{def_deltaSet}.
+\end{definition}
+
+
+It is clear that the set of all monomials which occur as leading monomials of an ideal $I$ satisfies 2. in \cref{def_deltaSet}. 
+Therefore, the set monomials which not occur as leading monomials of an ideal $I$ is a delta set.
+
+
+\begin{notation}
+    Denote $\Delta_I$ the delta set of monomials not occurring as leading monomials of an ideal $I$.
+\end{notation}
+
+
+It is a standard result that a Gr\"obner basis of an ideal generates the ideal. 
+Thus, by \cref{grobner_basis}, to obtain the delta set we only need to compute the Gr\"obner basis $G$ and the delta set is the set of monomials not divisible by the leading monomial of any $G_i \in G$. 
+Even though the delta set depends on the monomial ordering chosen to compute the Gr\"obner basis, its size does not depends on the monomial ordering; it is an invariant. 
+To compute Gr\"obner bases we used the RST Algorithm presented in \cite{rubio2016finding}.
+See appendix A for an overview on the algorithm.
+
+
+
+% - - - - - - - - - - - - - - - - - - - - -
+%       RECURENCE RELATIONS
+% - - - - - - - - - - - - - - - - - - - - - 
+
+\subsection{Periodic arrays and recurrence relations}
+Let $A$ be an $m$ dimensional infinite array with period $\eta = (n_1, ..., n_m)$. 
+In the 2 dimensional case, we label the entries on the array as
+\begin{align*} 
+    A =
+    \begin{tabu}{|c|c|c|c}
+        & \vdots & &  \\ \hline
+        A_{0,2} & A_{1,2} & A_{2,2} & \\ \hline
+        A_{0,1} & A_{1,1} & A_{2,1} & \cdots \\ \hline
+        A_{0,0} & A_{1,0} & A_{2,0} & \\ \hline
+    \end{tabu}
+\end{align*}
+similar to the coordinates system in the first quadrant of the plane. 
+The labeling in $m$ dimensions is analogous, but quite impossible to show visually.
+
+
+\begin{notation}
+    Let 
+    \[
+        C(\vec{x}) = \sum_{\alpha \in \supp(C)} c_\alpha\vec{x}^{\alpha} \in \mathbb{F}[\vec{x}],
+    \]
+    where $\supp(C) = \set{\alpha \st c_\alpha \textup{ is a non-zero coefficient of } C}$.
+\end{notation}
+
+
+\begin{definition}\label{def_valid_at_u}
+    Let $\alpha, u \in \mathbb{N}_0^m$. 
+    The polynomial $C(\vec{x})$ defines a linear recurrence relation at a point $A_u$ of the array $A$ if $\le(C) \leqslant u$ and 
+    \begin{equation}\label{valid_at_u}
+        \sum_{\alpha\in\supp(C)} c_\alpha A_{\alpha+u-\le(C)} = 0.
+    \end{equation}
+    In this case we say that $C$ \textbf{is valid at the point $A_u$}. 
+    Also set $C$ to be valid at $A_u$ if $\le(C) \not\leqslant u$.
+\end{definition}
+
+
+Let us give some visual intuition of what the above definition means. 
+Consider the case of a two dimensional array and visualize it as sitting in the first quadrant of the plane, so that it continues \textit{ad infinitum} in the positive $x$ and the positive $y$ directions. 
+Let $C$ be a polynomial that defines a linear recurrence relation on the array $A$. 
+Each monomial in $C$ tells us an entry of $A$, via its vector of exponents. 
+Hence, $C$ tells us a set of points that we have to use such that the linear combination of those points (the linear combination is defined by the coefficients of $C$) add up to zero.
+Imagine that those points are highlighted, so that we can move the array in the plane, but those points stay in the same place, with respect to the plane. 
+Given an entry $u$ of the array, we take the array and shift it such that the entry at $u$ is now aligned with the highlighted point determined by $\le(C)$. 
+Now, due to the shift, all the highlighted coordinates (might) differ form the ones we had at those points before the shift. 
+If the linear combination (determined by $C$) of those entries that now lie on the highlighted spots add up to zero, we say that $C$ is valid at $u$.
+
+What happens if $\le(C) \not\leqslant u$? 
+In that case we will have to shift the array upwards and/or to the right, but then some of the highlighted points may be left in blank (without an entry form the array). 
+In the case of $\le(C) \not\leqslant u$, we thereby say that the polynomial is valid at $u$.
+
+Assume $\le(C) \leqslant u$. 
+Notice that, if $(u_1,u_2)$ and $(v_1,v_2)$ are the coordinates of $u$ and $\le(C)$, respectively, then the shift needed to align $u$ with the point determined by $\le(C)$ is $u_1 - v_1$ spaces to the left and $u_2 - v_2$ downwards. 
+But shifting the array and keeping the plane still is the same as shifting the plane, i.e., shifting the origin, while the array stays still. 
+In the latter case, the shifts are positive thus determined by $u-\le(C)$. 
+That is why in \cref{def_valid_at_u} we have a plus $u-\le(C)$ in the subscript of $A$; to indicate the shift.
+
+
+\begin{definition}
+    A polynomial $C$ is \textbf{valid for the array} $A$ if the equation
+    \[
+        \sum_{\alpha\in\supp(C)} c_\alpha A_{\alpha+\beta} = 0
+    \]
+    holds for all $\beta \in \mathbb{N}_0^m$. 
+    In this case we also say that $A$ \textbf{satisfies the $m$-dimensional linear recurrence relation given by $C$}. 
+\end{definition}
+
+
+\begin{notation}
+    Denote $\val(A)$ the set of all polynomials valid for $A$. 
+\end{notation}
+
+
+\begin{prop}\label{ValA_ideal}
+    $\val(A)$ is an ideal in $\mathbb{F}[\Vec{x}]$.
+\end{prop}
+\begin{proof}
+    See appendix B.
+\end{proof}
+
+
+
+% - - - - - - - - - - - - - - - - - - - - -
+%       SECTION: LINEAR COMPLEXITY
+% - - - - - - - - - - - - - - - - - - - - - 
+
+\subsection{Multidimensional linear complexity}
+For sequences (one-dimensional arrays), the linear complexity is defined as the degree of the minimal polynomial that generates the sequence, if there is any. 
+The set of all polynomials that generate the sequence is an ideal. 
+In this case, it is a one-dimensional ideal and therefore a principal ideal, so the minimal polynomial is the (monic) generator. 
+Notice that the degree of the generator (minimal polynomial) is the same as the number of monomials not divisible by the leading monomial of the generator, exactly the size of the delta set. 
+Proposed in \cite{gomez2015linear}, a straightforward generalization of the one-dimensional definition of linear complexity to multiple dimensions is the following:
+
+\begin{definition}
+    Let $A$ be a multidimensional periodic array and $\val(A)$ the ideal of polynomials valid on $A$. 
+    The \textbf{multidimensional linear complexity} of $A$, denoted $\mathscr{L}(A)$, is
+    \[
+        \mathscr{L}(A) = \abs{\Delta_{\val(A)}}.
+    \]
+    If $(n_1, n_2, ..., n_m)$ is the period of $A$, then the \textbf{normalized multidimensional linear complexity} of $A$, denoted $\mathscr{L}_n(A)$, is
+    \[
+        \mathscr{L}_n(A) = \frac{\mathscr{L}(A)}{n_1\cdot n_2 \cdots n_m}.
+    \]
+\end{definition}
+
+
+
+
+% - - - - - - - - - - - - - - - - - - - - -
+%       SECTION: COMPOSITION
+% - - - - - - - - - - - - - - - - - - - - - 
+
+\subsection{Complexity analysis of two-dimensional arrays using the composition method}
+In \cite{moreno2011multi, moreno2012new} Moreno and Tirkel presented constructions of two-dimensional arrays by considering circular shifts of a suitable sequence $\mathbf{s}$ in $\mathbb{F}_q$, and constructing the array $A$ by using circular shifts of $\mathbf{s}$ as the columns. 
+The circular shifts are determined by another sequence $\mathbf{t}$.
+
+Let $\mathbf{t}$ be the sequence defined as $t_i = \alpha^i$, where $\alpha$ is a primitive root of $\mathbb{F}_q$, thus $\mathbf{t}$ has period $q-1$.
+Let $\mathbf{s}$ be the Legendre sequence with respect to a prime $p$, which is defined as
+\[
+    s_j = \begin{cases}
+        \frac{1+\left(\frac{j}{p}\right)}{2} & j\neq 0 \mod p\\
+        0 & j = 0 \mod p,
+    \end{cases}
+\]
+where $\left(\frac{j}{p}\right)$ is the Legendre symbol, hence $\mathbf{s}$ has period $p$.
+Define the composition method for constructing a two dimensional periodic array $A$ with period $(n_1,n_2)$ as follows:
+\begin{align}\label{composition}\tag{$*$}
+    A_{i,j} = s_{j-\log(t_i)},
+\end{align}
+taking the index $j-\log(t_i)$ modulo $p$.
+
+Arrays constructed using the composition method with the sequence $\mathbf{t}$ defined above and the Legendre sequence was studied in \cite{arce2019multidimensional}. 
+In that paper, Arce et al. gave an upper bound on the multidimensional linear complexity of an array constructed using the composition method with any periodic shift sequence and the Legendre sequence with respect to $p$ as the column sequence (see Proposition 6 in \cite{arce2019multidimensional}). 
+The authors conjectured that all such arrays have maximal complexity, i.e., attain the bound value. 
+
+
+
+
+% - - - - - - - - - - - - - - - - - - - - -
+%       SECTION: RESULTS
+% - - - - - - - - - - - - - - - - - - - - - 
+
+\section{Results}
+In the following section we proof the conjectured exact value of the multidimensional linear complexity for the array constructed using the composition method, with the shift sequence $\mathbf{t}$ defined by $t_i = \alpha^i$ and the Legendre sequence with respect to $p$ as the column sequence.
+In addition, we prove that the condition of $p\nmid q-1$ is a necessary condition for the conjecture to hold.
+Moreover, some examples of other definitions for the shift sequence are given, for which the bound of Proposition 6 in \cite{arce2019multidimensional} is not attained, proving the conjecture in \cite{arce2019multidimensional} does not hold for any shift sequence $\mathbf{t}$.
+
+
+From now on, the sequence $\mathbf{t}$ is defined as $t_i = \alpha^i$, where $\alpha$ is a primitive root of $\mathbb{F}_q$, and $\mathbf{s}$ is the Legendre sequence with respect to a prime $p$. 
+The sequence $\mathbf{t}$ has period $q-1$ and $\mathbf{s}$ has period $p$. 
+Therefore, \cref{composition} can be rewrite for this specific case as
+\begin{align}\label{composition_mod}\tag{$**$}
+    A_{i,j} = s_{j-(i \mod q-1) \mod p}.
+\end{align}
+We will use \cref{composition_mod} in the proofs because it makes more clear what is happening with the indices. 
+
+Before stating the lemmas directly related to our research, we state the following lemma regarding modular arithmetic.
+ 
+\begin{lemma}\label{mod_lemma}
+    Let $p,q$ be primes and let $i,j\in \mathbb{N}_0$. 
+    If $p \mid q-1$, then $j-(i\mod q-1) \mod p = j-i \mod p$.
+\end{lemma}
+\begin{proof}
+    By the division algorithm, $i = k(q-1) + r$, for some $k,r\in\mathbb{N}_0$ and $r<q-1$.
+    This implies $i \mod q-1 = r = i-k(q-1)$.
+    Then 
+    \begin{align*}
+        j-(i\mod q-1) \mod p = j - (i - k(q-1)) \mod p = j-i \mod p,
+    \end{align*}
+    where $q-1 = 0 \mod p$ because $p \mid q-1$.
+\end{proof}
+
+
+\begin{lemma}\label{lemma1}
+Let $A$ be the array constructed using the composition method as in \Cref{composition} with the Legendre sequence $\mathbf{s}$ and the sequence $\mathbf{t}$. 
+If $p \nmid q-1$, then the period $(n_1,n_2)$ of the array $A$ is $(q-1,p)$.
+\end{lemma}
+\begin{proof}
+    Let $i,j \in \mathbb{N}_0$. Then
+    \[
+        A_{i+k_0(q-1),\ j + k_1p} = s_{j + k_1p - (i+k_0(q-1) \mod q-1) \mod p} = s_{j - (i \mod q-1)\mod p} = A_{i,j},
+    \]
+    for any $k_0,k_1 \in \mathbb{N}_0$.
+    
+    Since the vertical period (columns) depends on the Legendre sequence, is clear that the it can not be less than $p$. 
+    Thus, the vertical period $n_2 = p$. 
+    Hence, we are left to prove that the horizontal period (rows) is not less than $q-1$.
+    
+    Assume, for the contrary, that the array $A$ has period $(n_1, p)$ with $n_1 < q-1$.
+    Then, in particular,
+    \[
+        A_{0,j} = A_{n_1,j} \implies s_{j-(0 \mod q-1) \mod p} = s_{j-(n_1 \mod q-1) \mod p}.
+    \]
+    But, since $n_1 < q-1$, we have $(n_1 \mod q-1) = n_1$. 
+    Therefore, 
+    \[
+        s_{j \mod p} = s_{j-n \mod p} \implies n \equiv 0\mod p.
+    \]
+    On the other hand, by construction $A_{0,j} = A_{q-1,j}$, but since the period is $n_1$, also $A_{q-1, j} = A_{q-1-n_1,j}$. 
+    Hence $A_{n_1,j} = A_{q-1-n-1, j}$. 
+    Notice, $0<q-1-n_1<q-1$, thus
+    \begin{align*}
+        A_{n_1,j} = A_{q-1-n_1, j} &\implies s_{j - (n_1 \mod q-1) \mod p} = s_{j - (q-1-n_1 \mod q-1) \mod p}\\
+        &\implies s_{j - n_1 \mod p} = s_{j - (q - 1 - n_1) \mod p}\\
+        &\implies n_1 \equiv q - 1 - n_1 \mod p\\
+        &\implies 2n_1 \equiv q-1 \mod p.
+    \end{align*}
+    Yet, $n\equiv 0 \mod p$, so also $q-1 \equiv 0 \mod p$. 
+    The latter is a contradiction to $p \nmid q-1$. 
+\end{proof}
+
+
+\begin{lemma}\label{lemma2}
+Let $A$ be the array constructed using the composition method as in \Cref{composition} with the Legendre sequence $\mathbf{s}$ and the sequence $\mathbf{t}$. 
+If $p \mid q-1$, then the period $(n_1,n_2)$ of the array $A$ is $(p,p)$.
+\end{lemma}
+\begin{proof}
+    The columns of $A$ are circular shifts of the Legendre sequence $\mathbf{s}$, hence the vertical period $n_2$ is the period of $\mathbf{s}$, so $n_2 = p$. 
+    Consider the first row of $A$, where we have the sequence
+    \[
+        s_0 = s_p, s_{p-1}, s_{p-2} ..., s_{1}, s_{0}, s_{p-1}... 
+    \]
+    That is the sequence $\mathbf{s}$ in reverse order so it has period $p$, implying the horizontal period $n_1$ of $A$ cannot be less than $p$, i.e., $n_1 \geqslant p$.
+    
+    We are only left to prove $A_{i,j} = A_{i+np,j}$ for $i<p$ and $n\in\mathbb{N}$. 
+    Let $i<p$ and $n \in \mathbb{N}$. 
+    Consider
+    \[
+        A_{i+np,j} = s_{j- (i + np \mod q-1) \mod p}.
+    \]
+    
+    Since $p \mid q-1$, by \cref{mod_lemma}, we can ignore the internal modulus $q-1$ and take the whole index modulus $p$.
+    Hence, 
+    
+    \[
+         A_{i+np,j} = s_{j-(i+np) \mod p} = s_{j-i \mod p} = A_{i,j}.
+    \]
+    We conclude: the horizontal period $n_1 = p$. 
+\end{proof}
+
+
+\begin{lemma}
+    Let $A$ be the array constructed using the composition method as in \Cref{composition} with the Legendre sequence $\mathbf{s}$ and the sequence $\mathbf{t}$. 
+    If $p \mid q-1$, then $\mathscr{L}(A) = \legendre$.
+\end{lemma}
+\begin{proof}
+    by \cref{mod_lemma}, we can ignore the internal modulus $q-1$ and take the whole index modulus $p$.
+    Having that in mind, we claim that $Y^{p-1}+X \in \val(A)$. 
+    Indeed, for any $\beta_1, \beta_2 \in \mathbb{N}_0$,
+    \begin{align*}
+        A_{0+\beta_1, p-1+\beta_2} + A_{1+\beta_1, 0+\beta_2} 
+        &= s_{p-1+\beta_2 - (0+\beta_1) \mod p} + s_{0+\beta_2 - (1+\beta_1) \mod p}\\
+        &= s_{-1+\beta_2 - \beta_1 \mod p} + s_{-1 + \beta_2 - \beta_1 \mod p}\\
+        &= 0,
+    \end{align*}
+    where the last equality is due to $\mathbf{s}$ being a binary sequence.
+    
+    Let us consider the lexicographic ordering with $Y<X$ and let $m(Y)$ be the minimal polynomial of $\mathbf{s}$. 
+    We know from proposition 3 in \cite{arce2019multidimensional} that $m(Y)\in\val(A)$.
+    Thus the delta set is enclosed by the monomials $Y^{\legendre}$ and $X$. 
+    There is no polynomial in $\val(A)$ whose leading monomial divides $Y^{\legendre}$, because if there is one, it must be a polynomial pure in $Y$ (because $Y<X$) and it will contradict the minimality of $m(Y)$. 
+    Hence the delta set is the set of monomials that are not divisible by $Y^{\legendre}$ nor $X$. 
+    The number of such monomials is $\legendre$. 
+    That concludes the proof.
+\end{proof}
+
+
+\begin{lemma}\label{main_thm}
+Let $A$ be the array constructed using the composition method as in \Cref{composition} with the Legendre sequence $\mathbf{s}$ and the sequence $\mathbf{t}$. 
+Let $C(X,Y)$ be a polynomial such that $i<q-1$ and $j<\legendre$ for any $(i,j)\in\supp(C)$.
+If $p \nmid q-1$ and $C(X,Y)\in\val(A)$, then $p \equiv 3$ or $p \equiv 7\mod 8$ and  $XY^{\legendre-1}$ divides the leading monomial of $C$.
+\end{lemma}
+\begin{proof}
+    Let $p \nmid q-1$. 
+    Then, by \cref{lemma1}, the period of $A$ is $(n_1,n_2) = (q-1,p)$. 
+    Let
+    \[
+        C(X,Y) = \sum_{\supp(C)} c_{i,j} X^iY^j \in \val(A),
+    \]
+    with $i<n_1$ and $j<\legendre$ for any $(i,j) \in \supp(C)$. 
+    Since the Legendre Sequence is a sequence in $\mathbb{F}_2$, the nonzero coefficients are just 1, thus we will omit the $c_{i,j}$. 
+    
+    Then, 
+    \[
+        \sum_{\supp(C)} A_{(i,j)+(\beta_1,\beta_2)} = \sum_{\supp(C)} s_{j+\beta_2 - (i+\beta_1 \mod n_1)} = 0
+    \]
+    for any $(\beta_1,\beta_2)\in \mathbb{N}_0^2$. 
+    In particular, for $\beta_1 = 0$, 
+    \[
+        \sum_{\supp(C)} s_{j+\beta_2 - (i \mod n_1)} = 0.
+    \]
+    Notice that since $i<n_1,$ then $i \mod n_1 = i$, thus
+    \begin{equation}\label{eq1}
+        \sum_{\supp(C)} s_{j-i+\beta_2} = 0.
+    \end{equation}
+    Denote $I=\max\set{i \st (i,j)\in \supp(C)}$. 
+    Notice $I>0$ because if $I=0$, then $C$ is a polynomial purely in $Y$ with degree less than $\legendre$ making it impossible to be in $\val(A)$. 
+    Also denote $\set{(I,j)} = \set{(i,j)\in\supp(C) \st i=I}$. 
+    Take $\beta_1 = n_1-I$ and let $\beta_2 \in \mathbb{N}_0$. 
+    Notice $I<n_1 \implies n_1-I > 0$.
+    We have
+    \begin{align*}
+        0 &= \sum_{\supp(C)} A_{(i,j)+(n_1-I,\beta_2)}\\
+        &= \sum_{\supp(C)} s_{j+\beta_2 - (i+n_1-I \mod n_1)}\\
+        &= \sum_{\set{(I,j)}} s_{j+\beta_2 - (I+n_1-I \mod n_1)} + \sum_{\supp(C)\backslash\set{(I,j)}} s_{j+\beta_2 - (i+n_1-I \mod n_1)}.
+    \end{align*}
+    Notice $i+n_1-I > 0$ and also $i<I$ for all index $i$ in the set $\supp(C)\backslash\set{(I,j)}$. 
+    Therefore $i-I<0 \implies 0 < i+n_1-I < n_1$, and $(i+n_1-I \mod n_1) = i+n_1-I$. 
+    Thus
+    \begin{align*}
+        0 &= \sum_{\set{(I,j)}} s_{j+\beta_2} + \sum_{\supp(C)\backslash\set{(I,j)}} s_{j-i+\beta_2+I-n_1}\\
+        &= \sum_{\set{(I,j)}} s_{j+\beta_2} + 2\sum_{\set{(I,j)}} s_{j-I+\beta_2+I-n_1} +  \sum_{\supp(C)\backslash\set{(I,j)}} s_{j-i+\beta_2 +I-n_1}\\
+        &= \sum_{\set{(I,j)}} [s_{j+\beta_2} + s_{j+\beta_2-n_1}] + \sum_{\supp(C)} s_{j-i+\beta_2 +I-n_1}.
+    \end{align*}
+    By $\Cref{eq1}$
+    \[
+        \sum_{\supp(C)} s_{j-i+\beta_2+I-n_1} = 0.
+    \]
+    Therefore, in order for $C$ to satisfy the linear recurrence relation, we must have
+    \begin{align}\label{sum_zero}
+        \sum_{\set{(I,j)}} [s_{j+\beta_2} + s_{j+\beta_2-n_1}] = 0.
+    \end{align}
+    Let $\gamma \equiv -n_1 \mod p$. 
+    Then $\Cref{sum_zero}$ holds for all $\beta_2\in\mathbb{N}_0$ if and only if 
+    \begin{align}
+        \sum_{\set{(I,j)}} Y^{j} + Y^{j+\gamma}  = (Y^\gamma - 1)g(Y) \in \val(\mathbf{s})
+    \end{align}
+    where the polynomial $g(Y) = \sum_{\set{(I,j)}} Y^j$. 
+    Notice $\gamma \not\equiv 0 \mod p$ because $p \nmid n_1$, thus $1\leqslant \gamma \leqslant p-1$.
+    Then $m(Y) \mid (Y^\gamma + 1)g(Y)$, but since $\deg(m)=\legendre$ and $\deg(g)<\legendre$, we must have $\gcd(m(Y), Y^\gamma+1) \neq 1$. 
+    
+    Denote $Q$ the set of quadratic residues modulo $p$, and let $\beta$ be a primitive $p$th root of unity in the splitting field of $Y^p-1$. 
+    Define
+    \[
+        \mu(Y) = \prod_{e \in Q}(Y-\beta^e),
+    \]
+    From \cite{ding1998linear} we know
+    \[
+        m(Y) = \begin{cases}
+        \mu(Y) & p \equiv 1 \mod 8\\
+        Y^p-1 & p \equiv 3 \mod 8\\
+        (Y^p-1)/(Y-1) & p \equiv 5 \mod 8\\
+        (Y-1)\mu(Y) & p \equiv 7 \mod 8
+        \end{cases}.
+    \]
+    Hence, for all the cases of $p \mod 8$, the roots of $m(Y)$ are $p$th roots of unity.
+    Since $p$ is prime, all the roots of unity, except 1, have order $p$ and therefore they are not roots of $Y^\gamma-1$. 
+    This implies 
+     \[
+        \gcd(m(Y), Y^\gamma-1) = \begin{cases}
+            1 & p \equiv 1,5 \mod 8\\
+            Y-1 & p \equiv 3,7 \mod 8.
+        \end{cases}
+    \]
+    For the cases $p \equiv 1,5 \mod 8$ we conclude that $C(X,Y) \not\in \val(A)$, which is a contradiction. 
+    For the cases $p \equiv 3,7 \mod 8$, the polynomial $g(Y)$ is forced to have degree equal to $\legendre-1$, thus $(I,\legendre-1)\in\supp(C)$. 
+    Therefore, the leading monomial of $C$ is $X^I Y^{\legendre-1}$, which is divisible by $XY^{\legendre}$. 
+    This finishes the proof.
+\end{proof}
+
+
+\begin{theorem}\label{The_Big_Thm}
+Let $A$ be the array constructed using the composition method as in \Cref{composition} with the Legendre sequence $\mathbf{s}$ and the sequence $\mathbf{t}$. 
+If $p \nmid q-1$, then the multidimensional linear complexity of $A$ is
+\[
+    \mathscr{L}(A) = \begin{cases}
+        n_1\left( \frac{p-1}{2} \right) & p\equiv 1 \mod 8\\
+        n_1(p-1)+1 & p \equiv 3\mod 8\\
+        n_1(p-1) & p \equiv 5 \mod 7\\
+        n_1\left( \frac{p-1}{2} \right) + 1 & p \equiv 7 \mod 8
+    \end{cases}.
+\]
+\end{theorem}
+\begin{proof}
+    Follows from \cref{main_thm} and proposition 6 in \cite{arce2019multidimensional}.
+\end{proof}
+
+
+\begin{cor}
+    Let $A$ be the array constructed using the composition method as in \Cref{composition} with the Legendre sequence $\mathbf{s}$ and the sequence $\mathbf{t}$. 
+    If $p \nmid q-1$, then the normalized multidimensional linear complexity of $A$ is
+    \[
+    \mathscr{L}_n(A) = \begin{cases}
+        \frac{1}{2}-\frac{1}{2p} & p\equiv 1 \mod 8\\
+        1-\frac{1}{p} + \frac{1}{p(q-1)} & p \equiv 3\mod 8\\
+        1-\frac{1}{p} & p \equiv 5 \mod 7\\
+        1-\frac{1}{2p} + \frac{1}{p(q-1)} & p \equiv 7 \mod 8
+    \end{cases}.
+    \]
+\end{cor}
+
+We said that \Cref{The_Big_Thm} holds for the particular construction defined by \cref{composition}, using shifts of the Legendre sequence as columns and the shift sequence $\mathbf{t} \subset \mathbb{F}_q$ defined by $t_i = \log (\alpha^i)$, where $\alpha$ is a primitive root of $\mathbb{F}_q$.
+Notice that the method of composition for constructing arrays is more general, i.e., defining the columns of the array as shifts of a particular sequence, where the shifts are determined by another sequence.
+The results of \Cref{The_Big_Thm} does not generalize for the case of using Legendre as the column sequence and any shift sequence.
+The following examples shed some light on this.
+\begin{example}
+    Let $\mathbf{s}$ be the Legendre sequence with respect to $p=17$ and let the shift sequence $\mathbf{t}$ be defined by $t_i = 2^i \mod 11$. 
+    \setcounter{MaxMatrixCols}{20}
+    \begin{align*}
+        \mathbf{s} &= \begin{tabular}{ccccccccccccccccc}
+        0 & 1 & 1 & 0 & 1 & 0 & 0 & 0 & 1 & 1 & 0 & 0 & 0 & 1 & 0 & 1 & 1,
+        \end{tabular}\\
+        \mathbf{t} &= \begin{tabular}{cccccccccc}
+        1 & 2 & 4 & 8 & 5 & 10 & 9 & 7 & 3 & 6.
+        \end{tabular}
+    \end{align*}
+    Then, the array $A$ constructed using the composition method with the above sequences is
+    \[
+        \begin{tabular}{c ||c|c|c|c|c|c|c|c|c|c|} \hline     
+        16 & & & & & & & & & & \\ \hline
+        15 & & & & & & & & & & \\\hline
+        14 & & & & & & & & & & \\\hline
+        13 & & & & & & & & & & \\\hline
+        12 & & & & & & & & & & \\\hline
+        11 & & & & & & & & & & \\\hline
+        10 & & & & & & $*$ & & & & \\\hline
+        9 & & & & & & & $*$ & & & \\\hline
+        8 & & & & $*$ & & & & & & \\\hline
+        7 & & & & & & & & $*$ & & \\\hline
+        6 & & & & & & & & & & $*$ \\\hline
+        5 & & & & & $*$ & & & & & \\\hline
+        4 & & & $*$ & & & & & & & \\\hline
+        3 & & & & & & & & & $*$ & \\\hline
+        2 & & $*$ & & & & & & & & \\\hline
+        1 & $*$ & & & & & & & & & \\\hline
+        0 & & & & & & & & & & \\\hline\hline
+        & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 
+        \end{tabular}
+    \]
+    and every star $*$ determines the starting point of $\mathbf{s}$ in each column and wrapping around at the top.
+    
+    Using the lexicographic ordering with $Y<X$, the reduced Gr\"obner basis of $\val(A)$ is
+    \[
+       1+Y+Y^2+Y^4+Y^6+Y^7+Y^8,
+    \]
+    and another polynomial with 40 monomials and leading monomial $X^9$. 
+    The size of the delta set is 72. 
+    If \Cref{The_Big_Thm} applied, the linear complexity would be 80 and not 72, but the theorem does not apply because the shift sequence is not the sequence for which it applies.
+\end{example}
+
+
+\begin{example}
+    The multidimensional linear complexity of the arrays constructed using the composition method with the defined sequences fail to attain the bound of Proposition 6 in \cite{arce2019multidimensional}.
+    \begin{enumerate}
+        \item The shift sequence defined by $t_i=7^i \mod 13$, and $\mathbf{s}$ the Legendre sequence with respect to $p=3$. 
+        The multidimensional linear complexity is 23, while the upper bound is 25.
+        
+        \item The shift sequence defined by $t_i=3^i \mod 19$, and $\mathbf{s}$ the Legendre sequence with respect to $p=5$. 
+        The multidimensional linear complexity is 68, while the upper bound is 72.
+    \end{enumerate}
+\end{example}
+
+
+We computed the multidimensional linear complexity of arrays constructed using the composition method with $\mathbf{s}$ the Legendre sequence with respect to $p$ and $\mathbf{t}$ defined as $t_i = \alpha^i \mod q$, for all pairs $(p,q)$ of odd primes up to 19 and for each pair, all the primitive roots modulo $q$.  
+For each pair $(p,q)$, if for one choice of $\alpha$ the complexity attains the bound, the bound is attained for all other choices of alpha. 
+Similarly, if the bound is not attained by one choice of $\alpha$, the bound is not attained by the other possible choices. 
+We have the following conjecture:
+
+
+\begin{conjecture}\label{conj}
+    Set $p,q$ to be odd primes. 
+    Let $A$ be the array constructed using the composition method with the Legendre sequence $\mathbf{s}$ as the column sequence and the shift sequence $\mathbf{t}$ defined as $t_i = \alpha^i \mod q$. 
+    The multidimensional linear complexity $\mathscr{L}(A)$ of $A$ is independent of the choice of $\alpha$.
+\end{conjecture}
+
+
+
+
+% - - - - - - - - - - - - - - - - - - - - -
+%       SECTION: CONCLUSIONS
+% - - - - - - - - - - - - - - - - - - - - - 
+
+\section{Conclusions}
+In this paper we continued the work done by Arce et al. in \cite{arce2019multidimensional}computing the multidimensional linear complexity of arrays constructed by composing different shifts sequences with the Legendre sequence as the column sequence. 
+With such computations we were able to have enough understanding to prove the conjectures in \cite{arce2019multidimensional} by adding the necessary condition of $p\nmid q-1$.
+Otherwise the multidimensional linear complexity is reduced to the complexity of the Legendre sequence with respect to $p$. 
+We also found examples of functions used to define the shift sequence that, after composing with the Legendre sequence, it results on arrays that have a multidimensional linear below the upper bound of Proposition 6 in \cite{arce2019multidimensional}, proving that \cref{The_Big_Thm} does not hold for any shift sequence.
+
+\section{Future work}
+One of our goals is to prove \Cref{conj}.
+We will continue studying the multidimensional linear complexity of other constructions. 
+In particular, Moreno and Tirkel \cite{moreno2012new} presented three families of arrays constructed using the composition method. 
+They determined the families by defining the shift sequence. 
+We seek to establish bounds or exact formulas for the multidimensional linear complexity of those families of arrays. 
+Also, we will start to study the correlation of the arrays, looking for any relationship between correlation and complexity, if it exists. 
+
+\newpage
+\nocite{*}
+\bibliographystyle{acm}
+\bibliography{ref}
+
+
+
+
+% - - - - - - - - - - - - - - - - - - - - -
+%       APPENDIX A: ALGORITHM
+% - - - - - - - - - - - - - - - - - - - - - 
+
+\newpage
+\section*{Appendix A: RST Algorithm}
+\begin{center}
+    \framebox[\linewidth]{\textbf{Problem:} Find a (reduced) Gr\"obner basis for $\val(A)$.}
+\end{center}
+
+
+
+\subsection*{Reformulation of the problem}
+
+Associate the array $A$ to the multivariate power series $A(\Vec{x})$, where the coefficient of $\vec{x}^\alpha$ is $A_\alpha$. 
+$A(\Vec{x})$ is also a Laurent series where all the terms with negative exponent have coefficient zero. 
+Let $C(\vec{x})$ be a multivariate polynomial that defines the linear recurrence relation of the array $A$, and let $C(\vec{x}^{-1})$ denote $C(x_1^{-1}, x_2^{-1}, ...,  x_m^{-1})$. 
+
+Consider the multiplication 
+\[
+    C(\vec{x}^{-1})A(\vec{x}) = \sum_{\alpha\in\supp(C)} c_\alpha \vec{x}^\alpha A(\vec{x}).
+\]
+For some $u \in \mathbb{N}_0^m$, the coefficient of $\vec{x}^{u-\le(C)}$ in the above product is given by
+\[
+    \sum_{\alpha\in\supp(C)} c_\alpha A_{\alpha + u - \le(C)}.
+\]
+which is the same summation that appears in \cref{valid_at_u}. 
+Therefore, we have another definition equivalent to \cref{def_valid_at_u}, but in terms of multiplication of series.
+
+
+\begin{customdef}{A.1}\label{def_valid_at_u2}
+    A polynomial $C(\vec{x})$ is \textbf{valid at a point $A_u$} if in the product $C(\vec{x}^{-1})A(\vec{x}),$ the coefficient of $\vec{x}^{u-\le(C)}$ is zero.
+\end{customdef}
+
+
+\begin{customdef}{A.2}\label{valid_up_to}
+    A polynomial $C(\vec{x})$ is \textbf{valid up to a point $A_u$} if it is valid at $A_\beta$, for all $\beta \leqslant_{T} u$.
+\end{customdef}
+
+
+\begin{customdef}{A.3}\label{star_operation}
+    Let $C(\vec{x})$ be a multivariate polynomial and $A(\vec{x})$ a multivariate power series. 
+    Then, define $C * A$ as
+    \[
+        C * A = \sum_{\alpha \in \supp(C)} c_\alpha A_\alpha
+    \]
+\end{customdef}
+
+
+\begin{customdef}{A.4}
+    Let $\alpha = (\alpha_1, ..., \alpha_m) \in \mathbb{N}_0^m$. 
+    We say that $\alpha$ is a \textbf{negative exponent} if $\alpha_i < 0$ for some $i$.
+\end{customdef}
+
+
+\begin{customnot}{A.5}\label{pi_notation}
+    $\Pi(\alpha)$ is a map determined by the assignment
+    \[
+        A_\beta \leftarrow A_{\beta + \alpha}, \qquad\textup{for all } \beta \in \mathbb{N}_0^m.
+    \]
+    It defines the action of shifting the array such that the entry $\alpha$ now lies in the origin. 
+    All the entries laying outside the first quadrant are ignored. 
+    In terms of power series,
+    \[
+        \Pi(\alpha) = \Vec{x}^{-\alpha}A(\vec{x}),
+    \]
+    and ignoring all the monomials with negative exponents. 
+    To see the algebraic treatment of this map, see \cite{rubio2016finding}.
+\end{customnot}
+
+
+We can rewrite \cref{def_valid_at_u2}, using \cref{star_operation} and \cref{pi_notation}:
+
+
+\begin{customdef}{A.6}\label{convolution}
+    A polynomial $C(\vec{x})$ is \textbf{valid at a point $A_u$} if $C * \Pi(u-\le(C)) = 0$
+\end{customdef}
+
+
+
+\subsection*{Discovering the algorithm}
+
+Let $A$ be a given $m$-dimensional periodic array. 
+Set a monomial order $<_T$, and arrange all the elements of $\mathbb{N}_0^m$ in ascending order, with respect to $<_T$. 
+Label this arrangement as $0 = e_0, e_1, e_2, ...$. 
+Therefore, $<_T$ give us a way to list all the entries of $A$ as a sequence $A_{e_0}, A_{e_1}, ...$. 
+Now consider the following table
+\begin{align*}
+    \begin{tabu}{c||c|c|c|c}
+    & e_0 & e_1 & e_2 & \cdots\\ \hline\hline
+    \Pi(e_0) & & & & \\ \hline
+    \Pi(e_1) & & & & \\ \hline
+    \Pi(e_2) & & & & \\ \hline
+    \vdots & & & & \\ 
+    \end{tabu}
+\end{align*}
+In due course we will do row-reduction in the table, thus from now on we will call it \textit{matrix} instead of table. 
+To fill the matrix, shift the array by $e_i$ and the entry at the point $e_j$ goes in the matrix in the cell corresponding to the row $\Pi(e_i)$ and column $e_j$. 
+This is
+\begin{align*}
+    \begin{tabu}{c||c|c|c|c|c}
+    & e_0 & e_1 & \cdots & e_i & \cdots\\ \hline\hline
+    \Pi(e_0) & A_{e_0 + e_0} & A_{e_0 + e_1} & \cdots & A_{e_0 + e_i} & \\ \hline
+    \Pi(e_1) & A_{e_1 + e_0} & A_{e_1 + e_1} & \cdots & A_{e_1 + e_i} & \\ \hline
+    \Pi(e_2) & A_{e_2 + e_0} & A_{e_2 + e_1} & \cdots & A_{e_2 + e_i} & \\ \hline
+    \vdots & & & & & \\ 
+    \end{tabu}
+\end{align*}
+
+Notice that in column $e_i$ we have the coefficients of the power series $\Pi(e_i)$, i.e., the array shifted by $e_i$ and written as an ascending sequence determined by $<_T$. 
+To avoid confusion between columns and rows, we will denote $\col(e_i)$ the power series associated to column $e_i$, but clearly $\col(e_i) = \Pi(e_i)$. 
+Let $C(\vec{x})$ be some polynomial, and assume all the rows of the above matrix are filled up to $\Pi(e_k)$, where $e_k = \le(C)$. 
+All the rows after $\Pi(e_k)$ are ignored. 
+If $C * \col(e_i) = 0$, for some $i$, then $C$ is valid at $A_{\le(C) + e_i} = A_{e_k + e_i}$. 
+This because, from \cref{convolution}, we have $u-\le(C) = e_i \implies u = \le(C) + e_i$.
+
+Now, lets assume that $C * \col(e_i) = 0$ for all $i$ from 0 to $t$, for some $t \in \mathbb{N}$. 
+Remove all the columns from $t+1$ to infinity, so that now we have a finite matrix
+\begin{align*}
+    \begin{tabu}{c||c|c|c|c|}
+    & e_0 & e_1 & \cdots & e_t \\ \hline\hline
+    \Pi(e_0) & A_{e_0 + e_0} & A_{e_0 + e_1} & \cdots & A_{e_0 + e_t} \\ \hline
+    \Pi(e_1) & A_{e_1 + e_0} & A_{e_1 + e_1} & \cdots & A_{e_1 + e_t} \\ \hline
+    \vdots & \vdots & \vdots & \ddots & \vdots \\ \hline
+    \Pi(e_k) & A_{e_k + e_0} & A_{e_k + e_1} & \cdots & A_{e_k + e_t} \\ \hline
+    \end{tabu}
+\end{align*}
+
+Then, $C$ is valid up to $A_{e_t + e_k}$ if and only if $C*\col(e_i) = 0$ for all $i=0,...,t$ if and only if the last row, i.e, row $\Pi(e_k)$ is linearly dependent with the previous rows. 
+Hence, if we row-reduce the matrix, row $\Pi(e_k)$ would be a row of zeros. 
+
+We started with the assumption that we had the polynomial $C$, but in practice we want to find $C$. 
+No problem! 
+The \textit{if and only if} chain in the previous paragraph is the key to find $C$. 
+We add the rows one by one, and row-reduce the matrix after adding each row. 
+If, after adding row $\Pi(e_k)$ and row-reducing, we obtain a row of zeros, then row $\Pi(e_k)$ is linearly dependent with the previous rows, thus there is a linear combination that defines the dependency, and that linear combination defines a polynomial $C$, with $\le(C) = e_k$. 
+This $C$ is valid in the array up to $A_{e_t}$.
+
+To synthesize, let us present the main results of the above analysis:
+\medskip\\
+\textbf{Setup:} Create a matrix with columns from $e_0$ up to $e_t$. 
+Add rows $\Pi(e_0)$ up to $\Pi(e_k)$, where each row is truncated after the $t$-th term. 
+For some $\lambda_0, ..., \lambda_k \in \mathbb{F}$, consider the row $R$ resulting from the linear combination  $\lambda_0\Pi(e_0) + \cdots + \lambda_k\Pi(e_k) = R$. 
+Put $R$ as the last row of the matrix, and let
+\[
+    C = \sum_{i = 0}^k \lambda_i \vec{x}^{e_i}.
+\]
+
+
+\begin{center}
+    \framebox[\linewidth]{\textbf{Result 1.} If the $j$-th column of $R$ is zero, then $C$ is valid at $A_{e_k + e_j}$.}
+\end{center}
+
+
+\begin{center}
+    \framebox[\linewidth]{\textbf{Result 2.} If all the entries of $R$ are 0, then $C$ is valid up to $A_{e_t + e_k}$.}
+\end{center}
+
+
+
+\subsection*{A bound on the columns.}
+
+The problem that arises is the following:
+If we want to find a polynomial that satisfies the linear recurrence relation on an infinite periodic array, we will have to determine linearly dependence between rows of infinite length, which is technically impossible. 
+The next proposition tells us that, based on the periodicity of the array, if a polynomial is valid up to a certain entry, then it is valid for the whole array. 
+In terms of the matrix, if a row is linearly dependent up to a certain column, the whole row is linearly dependent.
+
+
+\begin{customdef}{A.7}
+    A monomial $\Vec{x}^\alpha$ in a set of monomials is \textbf{minimal with respect to $\leqslant$} if $\vec{x}^\beta \leqslant \vec{x}^\alpha$ implies $\beta = \alpha$, for any $\vec{x}^\beta$ in the set.
+\end{customdef}
+
+
+\begin{customprop}{A.8}\label{prop1.1}
+    Let $A$ be an array with period $\eta = (n_1, ..., n_m)$. 
+    If $C$ is valid at $A_u$ for all $u \leqslant (2n_1-1, ..., 2n_m-1)$ and it is minimal with respect to divisibility of $\lm(C)$, then $C$ is valid for A.
+\end{customprop} 
+\begin{proof}
+    See prop 1.1 in \cite{rubio2016finding}.
+\end{proof}
+
+
+\noindent\textbf{Remark.}\ We take care or the \textit{minimal with respect to divisibility} condition by adding each row in ascending order.
+
+
+Combining \cref{prop1.1} and result 1 we obtain the following result.
+
+
+\begin{center}
+\framebox{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{
+    \textbf{Result 3.} To find a reduced Gr\"obner basis for $\val(A)$ it is enough to, after adding row $\Pi(e_i)$ to the matrix, consider all columns $e_j$ such that $e_i + e_j \leqslant (2n_1 - 1, ..., 2n_m - 1)$.}}
+\end{center}
+
+
+
+\subsection*{A bound on the rows}
+
+Since the arrays we are considering are periodic, it is not difficult to see that $\val(A)$ contains the polynomials $x_1^{n_1} - 1,\ x_2^{n_2} - 1,\ ...,\ x_m^{n_m} - 1$. 
+Thus, we have the following:
+
+
+\begin{customprop}{A.3}\label{A3}
+    Let $G$ be the reduced Gr\"obner basis for $\val(A)$ and $\eta$ be the period vector of $A$. 
+    If $P \in G$, then $\le(P) \leqslant \eta$. 
+    Moreover, if $\alpha \in \supp(P)$, then $\alpha \leqslant \eta$.
+\end{customprop}
+\begin{proof}
+    See appendix B.
+\end{proof}
+
+
+Recall that when we proceed to add row $\Pi(e_k)$ and row-reducing the matrix, if the last row is zero, then we found a polynomial $C$ with $\le(C) = e_k$ that is in the Gr\"obner basis of $\val(A)$. 
+Hence, by the above proposition, $\le(C) \leqslant \eta$. 
+Therefore, to find a polynomial $C$ in the Gr\"obner basis of $\val(A)$ we do not have to consider any row $\Pi(e_k)$ with $e_k \not\leqslant \eta$. 
+Moreover,  since $\alpha \leqslant \eta$ for all $\alpha \in \supp(C)$, it es enough to consider each row $\Pi(e_k)$ for $e_k \leqslant \eta$. 
+In addition, since we are constructing a reduced Gr\"obner basis $G$, no other polynomial in $G$ will have a term divisible by $\lm(C)$. 
+Thus, after finding $C$, no further row $\Pi(e_i)$ needs to be considered, for all $e_i$ with $\le(C) \leqslant e_i$.
+
+
+\begin{center}
+\framebox{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{
+    \textbf{Result 4:}  To find a reduced Gr\"obner basis for $\val(A)$ it is enough to, in the matrix, consider only the rows $\Pi(e_i)$ such that $e_i \leqslant \eta$.
+    Furthermore, if row $\Pi(e_k)$ is linearly dependent, then no other row $\Pi(e_h)$ needs to be considered, for all $e_h$ with $e_k \leqslant e_h$.}}
+\end{center}
+
+
+
+\subsection*{High-level pseudocode}
+
+\textbf{Description of the variables from the theory:}
+\begin{enumerate}
+    \item $A$ := periodic array of dimension $m$ with entries in a field $F$ and period $\eta = (n_1, ..., n_m)$.
+    \item $<_T$ := a monomial ordering
+    \item $\leqslant$ := partial order of divisibility
+    \item $G$ := reduced Gr\"obner basis for $\val(A)$
+    \item $\Delta$ := $\abs{\Delta_{\val(A)}}$
+\end{enumerate}
+\begin{algorithm}[H]
+\caption{Rubio-Sweedler-Taylor (RST) Algorithm}
+\begin{algorithmic}[1]
+    \REQUIRE $A, m, \eta, F$, and $<_T$
+    \ENSURE $G$ and $\Delta$
+    \STATE \texttt{exponentsColumn} := list of exponents $\leqslant 2\eta -1$ in ascending order with respect to $<_T$
+    \STATE \texttt{exponentsRow} := list of exponents $\leqslant \eta$ in ascending order with respect to $<_T$
+    \STATE Create matrix \texttt{matrix} with columns of the same length as \texttt{exponentsColumn}
+    \STATE Create identity \texttt{idMatrix} of dimension $0 \times 0$
+    \STATE $\Delta \leftarrow 0$
+    \WHILE{\texttt{exponentsRow} is not empty}
+        \STATE $\alpha \leftarrow$ first element in \texttt{exponentsRow} 
+        \STATE Add row $\Pi(\alpha)$ as the last row of \texttt{matrix} 
+        \STATE Add one row and one column at the end of \texttt{idMatrix}
+        \STATE Row-reduce \texttt{matrix}
+        \STATE On \texttt{idMatrix} do the same operations performed on line 10
+        \IF{last row of \texttt{matrix} is zero for all column $i$ such that \texttt{exponentsColumns}$[i] + \alpha \leqslant 2\eta - 1$}
+            \STATE Remove the last row of \texttt{matrix}
+            \STATE Remove $\alpha$ and $\set{\beta \st \alpha \leqslant \beta}$ from \texttt{exponentsRow}
+            \STATE Add to $G$ the polynomial defined by the last row of \texttt{idMatrix}
+            \STATE Remove the last row of \texttt{idMatrix}
+        \ELSE
+            \STATE $\Delta \leftarrow \Delta + 1$
+        \ENDIF
+    \ENDWHILE
+    \RETURN $G$ and $\Delta$
+\end{algorithmic}
+\end{algorithm}
+
+
+An implementation of the algorithm using C++ can be found in\\ \href{https://github.com/louieqp/RST}{https://github.com/louieqp/RST}.
+
+
+% - - - - - - - - - - - - - - - - - - - - -
+%       APPENDIX B: PROOFS
+% - - - - - - - - - - - - - - - - - - - - - 
+\newpage
+\section*{Appendix B: Some proofs}
+\noindent\textbf{Proof of \cref{lemma_1}.}
+\begin{proof}\hfill
+    \begin{enumerate}[(i)]
+        \item We need to show that if $S$ is any subset of $\mathbb{N}_0^m$ such that $0 \in S$, then $0$ is the smallest element in $S$. 
+        Let $\alpha \in S$ be the smallest element. 
+        If $0 \leqslant_T \alpha$, there is nothing to prove. 
+        Assume $\alpha <_T 0$. Then $\alpha + \alpha <_T 0 + \alpha \implies 2\alpha <_T \alpha$, but this is a contradiction since $\alpha$ is the smallest element in $S$.
+        
+        \item Let $\alpha = (\alpha_1, ..., \alpha_m)$ and $\beta = (\beta_1, ..., \beta_m)$. 
+        Since $\Vec{x}^\alpha \mid \vec{x}^\beta$, we have $\alpha_i \leqslant \beta_i$ for $i = 1, ..., m$. 
+        This implies $\beta = \alpha + \gamma$, for some $\gamma \in \mathbb{N}_0^m$. 
+        By part (i), $0 \leqslant_T \gamma \implies \alpha \leqslant_T \alpha + \gamma = \beta$.
+    \end{enumerate}
+\end{proof}
+
+
+\noindent\textbf{Proof of \cref{ValA_ideal}.}
+\begin{proof}
+    Clearly $0 \in \val(A)$. 
+    Let 
+    \[
+        C(\vec{x}) = \sum_{\alpha \in \supp(C)} c_\alpha\vec{x}^\alpha \qquad\textup{and}\qquad
+        B(\vec{x}) = \sum_{\alpha \in \supp(B)} b_\alpha\vec{x}^\alpha.
+    \]
+    Assume $B,C \in \val(A)$. 
+    Let $S = \supp(B) \cup \supp(C)$ and for $\alpha \in S$ set $c_\alpha = c_\alpha$ if $\alpha \in \supp(C)$ and $c_\alpha = 0$ otherwise; analogously for $b_\alpha$. 
+    Then,
+    \begin{align*}
+        \sum_{\alpha \in S} (c_\alpha + b_\alpha)A_{\alpha + \beta} &= \sum_{\alpha \in S} [c_\alpha A_{\alpha + \beta} + b_\alpha A_{\alpha + \beta}]\\
+        &= \sum_{\alpha \in \supp(C)} c_\alpha A_{\alpha + \beta} + \sum_{\alpha \in \supp(B)} b_\alpha A_{\alpha + \beta} = 
+        0 + 0 = 0.
+    \end{align*}
+    Therefore, $C+B \in \val(A)$, and $\val(A)$ is closed under addition. 
+    Now assume $C \in \val(A)$ and $B$ is any polynomial. 
+    In the product
+    \begin{equation}\label{product_BC}
+        (BC)(\vec{x}) = \sum_{\gamma \in \supp(B)} b_\gamma \vec{x}^\gamma C(\vec{x})
+    \end{equation}
+    consider only one term of the summation. 
+    That is,
+    \[
+        b_\gamma \vec{x}^\gamma C(\vec{x}) = b_\gamma \sum_{\alpha \in \supp(C)} c_\alpha\vec{x}^{\gamma + \alpha}.
+    \]
+    Now, we have
+    \begin{align*}
+        \sum_{\alpha \in \supp(C)} c_\alpha A_{\alpha + \beta} = 0 \textup{ for all } \beta \in \mathbb{N}_0^m &\implies \sum_{\alpha \in \supp(C)} c_\alpha A_{\alpha + \gamma + \beta} = 0\\
+        &\implies b_\gamma \sum_{\alpha \in \supp(C)} c_\alpha A_{(\alpha + \gamma) + \beta} = 0.
+    \end{align*}
+    This implies that, from \cref{product_BC}, each term $b_\gamma \vec{x}^\gamma C(\vec{x}) \in \val(A)$ and by the additive closure of $\val(A)$, $(BC)(\vec{x}) \in \val(A)$.
+\end{proof}
+
+
+\noindent\textbf{Proof of \cref{A3}.}
+\begin{proof}
+    Notice that $(x_i^{n_i} - 1) \in \val(A)$ for all $i = 1, ..., m$. 
+    Thus there is some $G_1 \in G$ such that $\lm(G_1) \mid x_i^{n_i}$. 
+    Since $G$ is a reduced Gr\"obner basis of $\val(A)$,  if $G_2 \in G$ and $\alpha = (\alpha_1, ..., \alpha_n) \in \supp(G_2)$ then $\lm(G_1) \nmid \vec{x}^\alpha$, which implies $\alpha_i \leqslant n_i$, for all $i = 1, ..., m$. 
+    We conclude $\alpha \leqslant \eta$. 
+    $G_2$ was arbitrary hence the result.
+\end{proof}
+
+\end{document}
